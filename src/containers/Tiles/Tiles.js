@@ -26,6 +26,7 @@ class Tiles extends Component{
       }
     
     componentDidMount(){
+        console.log("COMPONENT MOUNT")
         if(this.state.pokemons.length === 0){
             new Promise((resolve, reject) => {
                 return resolve(this.getPokemons());
