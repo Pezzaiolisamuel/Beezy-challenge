@@ -35,6 +35,8 @@ class Tiles extends Component{
         
     }
 
+    
+
     //get pokemons available from api
     getPokemons(){
         let url= `https://pokeapi.co/api/v2/pokemon?limit=1118&offset=0/`;
