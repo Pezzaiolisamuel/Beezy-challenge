@@ -1,0 +1,8 @@
+.App {
+  text-align: center;
+  min-width: 350px;
+}
+.App h1{
+  position: relative;
+  z-index: 10;
+}

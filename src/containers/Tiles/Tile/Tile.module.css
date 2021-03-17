@@ -1,0 +1,22 @@
+.Tile{
+    height:180px;
+    border: 1px solid transparent;
+    margin: 10px;
+    color: #0d421d;
+    border-radius: 5px;
+    transition: all 3000;
+    background-color: antiquewhite;
+}
+.Tile:hover{
+    transform: scale(1.03);
+    background-color: gold;
+    color: black;
+}
+
+.Tile img{
+    width: 70%;
+    height: 70%;
+}
+.Tile p{
+    text-transform: uppercase;
+}

@@ -1,0 +1,38 @@
+.Filters{
+    background-color: transparent;
+    height: 20vh;
+    width: 98%;
+    text-align: end;
+    margin: 0 auto;
+}
+
+.Filters img{
+    position: absolute; 
+    top: 30px;
+    left: 10px;
+    z-index: 0; 
+    
+}
+.Filters input, .Filters select {
+    position: relative;
+    z-index: 1;   
+    width: 200px;
+    height: 35px;
+    text-align: center;
+    border-radius: 17px;
+    border: none;  
+    margin-right: 20px; 
+    margin-bottom: 12px; 
+}
+.Filters input:focus, .Filters select {
+    outline-offset: 0px;
+    outline: none;
+}
+
+.counter{
+    position: relative;
+    z-index: 1; 
+    padding: 5px;
+    height: 20px; 
+    font-size: 12px;
+}

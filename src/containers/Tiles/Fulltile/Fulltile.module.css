@@ -1,0 +1,123 @@
+.Fulltile{
+    width: 100%;
+    height:100%;
+    background-color: rgb(49, 159, 255);
+    margin: 0px;
+    color: black;
+    text-decoration: none;
+    text-align: start;
+    overflow: hidden;
+}
+
+.Fulltile img{
+    height: 170%;
+    width: 80%;
+}
+.Fulltile a{
+    background-color: red;
+    color: white;
+    padding: 0.7em 1.2em;
+    text-decoration: none;
+    text-transform: uppercase;
+    position: relative;
+    top: 20px;
+    left: 10px;
+    margin: 20px auto;
+    border-radius: 5px;
+    z-index: 3;
+}
+
+.Fulltile p{
+    font-size: 20px;
+    text-transform: uppercase;
+}
+.Fulltile .display{
+    background-color: white;
+    width: 80%;
+    font-size: 20px;
+    text-transform: uppercase;
+    margin: auto;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: row;
+    height: 50%;
+    clip-path: polygon(0% 0%, 100% 0%, 85% 300%, 0% 100%);
+}
+.Fulltile .info{
+    min-width: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    padding: 30px;
+    padding-right: 0px;
+    text-align: right;
+}
+
+@media only screen and (max-width: 940px) {
+    .Fulltile .display{
+        background-color: white;
+        height: 50%;
+        max-height: 350px;
+        margin: 10% 15%;
+        width: 70%;
+        clip-path: polygon(10% 0%, 100% 0%, 70% 300%, 0% 100%);
+        flex-direction: column;
+    }
+    .Fulltile .info{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 30px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        text-align: center;
+    }
+    .Fulltile p{
+        font-size: 15px;
+        margin: 0.5em;
+    }
+    .Fulltile img{
+        height: 90%;
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+@media only screen and (max-width: 481px) {
+    .Fulltile .display{
+        width: 100%;
+        clip-path: polygon(10% 0%, 100% 0%, 70% 300%, 0% 100%);
+        flex-direction: column;
+    }
+    .Fulltile .info{
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 30px;
+        padding-top: 0px;
+        padding-bottom: 0px;
+        text-align: center;
+    }
+    .Fulltile p{
+        font-size: 15px;
+        margin: 0.5em;
+    }
+    .Fulltile img{
+        height: 90%;
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+@media only screen and (max-height: 481px) {
+    .Fulltile .display{
+        max-height: 100px;
+        clip-path: polygon(10% 0%, 100% 0%, 70% 300%, 0% 100%);
+        flex-direction: column;
+        margin: 10% auto;
+        display: flex;
+        flex-direction: row;
+        width: 80%;
+    }
+    .Fulltile img{
+        margin-right: 1000px;
+    }
+}
