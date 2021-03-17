@@ -12,21 +12,14 @@ class Tiles extends Component{
         this.state={
             error: null,
             isLoaded: false,
-            items: [],
             pokemons: [],
-            pokemonsPages:[],
-            pageShown:0,
-            pokemonsData: [],
-            filteredPokemon: [],
             pokemonSelected: null,
             pokemonsToShow : [],
-            limit: 20,
-            offset:0,
+            numberOfTilesShown: 0,
         };
-      }
+    }
     
     componentDidMount(){
-        console.log("COMPONENT MOUNT")
         if(this.state.pokemons.length === 0){
             new Promise((resolve, reject) => {
                 return resolve(this.getPokemons());
@@ -44,21 +37,8 @@ class Tiles extends Component{
         .then(docs=>{
             if(docs){
                 let pokemons = docs.data.results;
-                var perChunk = 20 // pokemons per page  (array of arrays) 
-
-                var result = pokemons.reduce((resultArray, item, index) => { 
-                const pageIndex = Math.floor(index/perChunk)
-
-                if(!resultArray[pageIndex]) {
-                    resultArray[pageIndex] = [] // start a new page
-                }
-                resultArray[pageIndex].push(item)
-
-                return resultArray
-                }, [])
-
-                this.setState({pokemons: pokemons, pokemonsPages: result});
-                this.mapPokemons();
+                this.setState({pokemons: pokemons});
+                this.mapPokemons(pokemons);
             }else{
                 alert("trow Error");
             }
@@ -69,31 +49,35 @@ class Tiles extends Component{
         })
     }
 
-    mapPokemons(filter){
-        console.log(this.state.pageShown)
-        let pokemons = this.state.pokemonsPages[this.state.pageShown];
-        // if no filters
+    mapPokemons(filter, numberOfPokemons){
+        filter ? filter = filter : filter = this.state.pokemons;
+        numberOfPokemons ? numberOfPokemons = numberOfPokemons : numberOfPokemons = 20;
+        let pokemonsList ={
+            now: filter.slice(0, numberOfPokemons),
+            later: filter.slice(numberOfPokemons),
+            arr : filter
+        } 
         return Promise.all(
             // pokemons.slice(offset, limit).map(p =>{
-            pokemons.map(p =>{
+            pokemonsList.now.map(p =>{
                 // "https://pokeapi.co/api/v2/pokemon/${number}"
             return axios.get(p.url)
         })).then(res=>{
-            let pokemonsData=[];
-            let arr =  res.map(p=>{
-                pokemonsData.push({
+            let pokemonsData = res.map(p=>{
+                return{
                     name: p.data.name,
                     id: p.data.id,
                     image: p.data.sprites.other.dream_world.front_default,
                     exp: p.data.base_experience,
-                })
-            })
-            this.updatePokemons(pokemonsData);
+                }});
+            pokemonsList.now = [...pokemonsData];
+
+            this.updatePokemons(pokemonsList, numberOfPokemons);
         })
     }
 
-    updatePokemons(docs){
-        this.setState({isLoaded: true, pokemonsData: docs});
+    updatePokemons(docs, numberOfPokemons){
+        this.setState({isLoaded: true, pokemonsToShow: docs , numberOfTilesShown: numberOfPokemons});
     }
     
     handleSearchChanges(e){
@@ -105,40 +89,26 @@ class Tiles extends Component{
     onSearch(filter){
         let pokemons = [...this.state.pokemons];
         let filteredPokemon = pokemons.filter(p=> p.name.includes(filter) )
-        this.findPokemonData(filteredPokemon);
         this.mapPokemons(filteredPokemon);
     }
-
-    findPokemonData(arr){
-        console.log(arr);
-    }
-
-    addPokemonsToList(){
-        // let newPokemonSet;
-        // this.state.filteredPokemon.length > 0 && this.state.isMoreAvailable? newPokemonSet= this.state.filteredsPokemon : newPokemonSet =  this.state.pokemonsData;
-        // // newPokemonSet.push(...docs);
-        // console.log(this.state.filteredPokemon);
-        // console.log(newPokemonSet);
-        let addAPage = this.state.pageShown+1;
-        this.setState({ pageShown: addAPage});  
-        document.querySelector('#load-more-btn').disabled = false;
-        this.mapPokemons();
-
-    }
-
-
-
-    handlePokemonSelection(id){
-        let selectedPokemon= this.state.pokemonsData.findIndex((p, i) => p.name == this.state.pokemons[id -1].name)
-        this.setState({pokemonSelected : selectedPokemon})
-    }
-
+    
     loadMoreTiles(){
         document.querySelector('#load-more-btn').disabled = true;
         this.addPokemonsToList();
     }
 
-    
+    addPokemonsToList(){
+        let numberOfTiles = this.state.numberOfTilesShown + 20;
+        let pokemons = this.state.pokemonsToShow.arr;
+        this.mapPokemons(pokemons, numberOfTiles);
+        document.querySelector('#load-more-btn').disabled = false;
+    }
+
+    handlePokemonSelection(name){
+        let selectedPokemon= this.state.pokemonsToShow.now.find((p) => p.name == name)
+        console.log(selectedPokemon);
+        this.setState({pokemonSelected : selectedPokemon})
+    }
 
     render(){
         const { error, isLoaded, data } = this.state;
@@ -148,7 +118,7 @@ class Tiles extends Component{
         } else if (!isLoaded) {
             return <div>Loading...</div>;
         } else {
-            const pokemonTiles = this.state.pokemonsToShow.map(p => (
+            const pokemonTiles = this.state.pokemonsToShow.now.map(p => (
                 <NavLink className="nav-link"
                     to={`/pokemon${p.id}`} 
                     key={p.id} >
@@ -157,32 +127,31 @@ class Tiles extends Component{
                         Name={p.name}
                         Experience={p.exp}
                         Key={p.id}
-                        click={()=> this.handlePokemonSelection(p.id)}
+                        click={()=> this.handlePokemonSelection(p.name)}
                     />
                 </NavLink>
             ))
             
-            
             const loadMoreTile = <button className={classes.loadMoreTile}
-                                    id="load-more-btn"
-                                    onClick={()=>this.loadMoreTiles()}
-                                    key={-1}
-                                    >Load More Pokemons</button>;
-            pokemonTiles.push(loadMoreTile)
+                id="load-more-btn"
+                onClick={()=>this.loadMoreTiles()}
+                key={-1}
+                >Load More Pokemons</button>;
 
-            let offset =this.state.offset;
-            
-
+            if(this.state.pokemonsToShow.later.length > 0){
+                pokemonTiles.push(loadMoreTile);
+            }  
+            let offset = this.state.numberOfTilesShown - 20;
 
             return  <div>
                         <Route path="/" exact render={()=> <Filters value={this.state.filterInput} filtering={(e)=> this.handleSearchChanges(e)} offset={offset}/>} />
                         <div className={classes.Tiles}>
                             <Route path="/" exact render={()=> pokemonTiles} />
                             <Route path="/pokemon:id" render={()=><Fulltile 
-                                    Image={this.state.pokemonsData[this.state.pokemonSelected].image}
-                                    Name={this.state.pokemonsData[this.state.pokemonSelected].name}
-                                    Experience={this.state.pokemonsData[this.state.pokemonSelected].exp}
-                                    Key={this.state.pokemonsData[this.state.pokemonSelected].id}
+                                    Image={this.state.pokemonSelected.image}
+                                    Name={this.state.pokemonSelected.name}
+                                    Experience={this.state.pokemonSelected.exp}
+                                    Key={this.state.pokemonSelected.id}
                                 /> } />
                         </div>
                     </div>
